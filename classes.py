@@ -1,3 +1,4 @@
+from typing import Iterator
 from abc import ABC, abstractmethod
 import requests
 
@@ -10,8 +11,7 @@ class Engine(ABC):
 
 
 class HH(Engine):
-    def __init__(self, keywords: str = ''):
-        self.dict_vacancies = {}
+    def __init__(self, keywords: str = '') -> None:
         self.url = 'https://api.hh.ru/vacancies/'
         self.params = {'per_page': '40',
                        'text': keywords,
@@ -20,11 +20,10 @@ class HH(Engine):
                        'archived': 'false',
                        }
 
-    def get_request(self, pade: int = 1):
+    def get_request(self, pade: int = 1) -> Iterator:
         self.params.update({'page': str(pade)})
         req_data = requests.get(self.url, params=self.params)
         if req_data.status_code == 200:
-            teg = 'highlighttext>'
             for each in req_data.json()['items']:
                 title = each['name']
                 link = 'https://hh.ru/vacancy/' + each['id']
@@ -33,10 +32,11 @@ class HH(Engine):
                     desc = each['snippet']['requirement']
                     if not desc:
                         desc = ""
+                teg = 'highlighttext>'  # лишний тег
                 desc = desc.replace('<' + teg, '').replace('</' + teg, '')
                 salary = each['salary']['from']
                 if not salary:
-                    salary=each['salary']['to']
+                    salary = each['salary']['to']
                 yield {'salary': int(salary),
                        'title': title,
                        'link': link,
@@ -46,11 +46,11 @@ class HH(Engine):
 
 
 class SJ(Engine):
-    def __init__(self, keywords: str = ''):
+    def __init__(self, keywords: str = '') -> None:
         self.url = 'https://russia.superjob.ru/vacancy/search/'
         self.params = f'?keywords={keywords}&per_page=10&pade='
 
-    def get_request(self, pade: int = 1):
+    def get_request(self, pade: int = 1) -> Iterator:
         req_data = requests.get(self.url + self.params + str(pade))
         if req_data.status_code == 200:
             req_items = req_data.text.split('<div class="f-test-search-result-item">')[1:-1]
@@ -60,8 +60,8 @@ class SJ(Engine):
                     spliter_1 = '<span class="_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi">'
                     step_0 = each.split('target="_blank" href=')[1].split(spliter_1)
 
-                    step_1 = step_0[0].split('</a>')[0]
-                    step_1 = step_1.replace('<span class="_1Ijga">', '').replace('</span>', '').split('>')
+                    step_1 = step_0[0].split('</a>')
+                    step_1 = step_1[0].replace('<span class="_1Ijga">', '').replace('</span>', '').split('>')
 
                     title = step_1[1]
                     link = step_1[0][1:-1]
