@@ -8,9 +8,18 @@ def get_menu():
     print("1. вывести 5 вакансий с самой высокой оплатой")
     print("2. вывести 5 случайных вакансий")
     print("3. вывести вакансии с зарплатой выше заданной")
-    print("4. повторить поиск")
-    print("5. выход")
+    print("4. записать результаты в файл")
+    print("5. повторить поиск")
+    print("6. выход")
     return input(">>> ")
+
+
+def print_vacance(vacancies):
+    for each in vacancies:
+        print(each["title"])
+        print(" ", each["salary"])
+        print(" ", each["desc"])
+        print(" ", each["link"])
 
 
 def main():
@@ -27,23 +36,33 @@ def main():
                     vacancies = site.get_request(page)
         count = set_data_of_file(vacancies)
         print(f"найдено {count} подходящих вакансий")
-        vacancies = get_data_of_file()
+
         while True:
             user_input = get_menu()
-            if user_input == "5":
-                exit()
-            if user_input == "4":
-                break
             if user_input == "1":
+                vacancies = get_data_of_file()
                 vacancies = get_sort(vacancies)
                 vacancies = get_limit(vacancies, 5)
-            if user_input == "2":
+                print_vacance(vacancies)
+            elif  user_input == "2":
+                vacancies = get_data_of_file()
                 vacancies = get_random(vacancies, count)
-            if user_input == "3":
+                print_vacance(vacancies)
+            elif  user_input == "3":
+                vacancies = get_data_of_file()
                 vacancies = get_more(vacancies, int(input("зп >= ")))
+                print_vacance(vacancies)
+            elif  user_input == "4":
+                count_vac = set_rezult_of_file(vacancies)
+                print(f'в файл записано {count_vac} вакансий')
+            elif  user_input == "5":
+                break
+            elif  user_input == "6":
+                exit()
+            else:
+                print("нет такого пункта")
 
-            for each in vacancies:
-                print(each)
+
 
 
 if __name__ == '__main__':
