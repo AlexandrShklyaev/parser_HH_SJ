@@ -20,18 +20,14 @@ def set_data_of_file(data: Iterator) -> int:
     return count
 
 
-def set_rezult_of_file(data: Iterator) -> int:
+def set_rezult_of_file(data: Iterator) -> Iterator:
     """ записывает результат в файл rezult.txt"""
-    count = 0
     with open("rezult.txt", "w", encoding="utf-8") as file:
         for each in data:
             line = "\n".join([each["title"], str(each["salary"]), each["desc"], each["link"]])
+            line = line + "\n" + "-" * 50 + "\n"
             file.write(line)
-            file.write("\n")
-            file.write("-" * 50)
-            file.write("\n")
-            count += 1
-    return count
+            yield line
 
 
 def get_data_of_file() -> Iterator:
