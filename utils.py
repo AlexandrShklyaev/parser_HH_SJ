@@ -3,10 +3,16 @@ import json
 import random
 
 
+def reset_data_of_file() -> None:
+    """ очищает данные о вакансиях в файле vacances.json"""
+    with open("vacances.json", "w", encoding="utf-8") as file:
+        file.write("")
+
+
 def set_data_of_file(data: Iterator) -> int:
     """ записывает данные о вакансиях в файл vacances.json"""
     count = 0
-    with open("vacances.json", "w", encoding="utf-8") as file:
+    with open("vacances.json", "a", encoding="utf-8") as file:
         for each in data:
             json.dump(each, file, ensure_ascii=False)
             file.write("\n")
@@ -36,15 +42,9 @@ def get_data_of_file() -> Iterator:
 
 
 def get_sort(list_lines: Iterator, key: str = "salary") -> Iterator:
-    """ сортировка вакансий по полю key (по умолчанию  = размер зп)"""
-    for each in sorted(list_lines, key=lambda x: x[key], reverse=True):
+    """ сортировка вакансий по полю key (по умолчанию  = размер зп) топ 5 """
+    for each in sorted(list_lines, key=lambda x: x[key], reverse=True)[:5]:
         yield each
-
-
-def get_limit(list_lines: Iterator, limit: int) -> Iterator:
-    """ выбирает limit первых вакансий """
-    for _ in range(limit):
-        yield next(list_lines)
 
 
 def get_random(list_lines: Iterator, limit: int) -> Iterator:

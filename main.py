@@ -28,11 +28,13 @@ def change_menu_item(vacancies: Iterator, count: int):
         user_input = get_menu()  # выбор пункта меню
         if user_input != "4":
             vacancies = get_data_of_file()
+
         if user_input == "1":  # топ 5 зп
             vacancies = get_sort(vacancies)
-            vacancies = get_limit(vacancies, 5)
+
         elif user_input == "2":  # 5 случайных
             vacancies = get_random(vacancies, count)
+
         elif user_input == "3":  # зп > указанной
             vacancies = get_more(vacancies, int(input("зп >= ")))
 
@@ -55,17 +57,17 @@ def main():
     while True:
         keyword = input("введите ключевое слово: ")
         print('идёт поиск подходящих вакансий ...')
-        vacancies = None
+        count = 0
+        reset_data_of_file()
         for site in (HH(keyword), SJ(keyword)):  # перебор по двум сайтам
-            for page in range(20):
-                if vacancies:
-                    vacancies = chain(vacancies, site.get_request(page))  # добавляем вакансии в генератор
-                else:
-                    vacancies = site.get_request(page)  # создаём генератор, если его нет
+            vacancies = site.get_request(1)  # создаём генератор для каждого сайта
+            for page in range(2, 50):
+                vacancies = chain(vacancies, site.get_request(page))  # добавляем вакансии в генератор
 
-        count = set_data_of_file(vacancies)  # запись найденных вакансий в файл
-        print(f"найдено {count} подходящих вакансий")
-
+            site_count = set_data_of_file(vacancies)  # запись найденных вакансий в файл
+            count += site_count
+            print(f" > на сайте {site} найдено {site_count} подходящих вакансий")
+        print(f"всего найдено {count} подходящих вакансий\n")
         change_menu_item(vacancies, count)  # обработка меню
 
 
