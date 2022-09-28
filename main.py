@@ -1,5 +1,3 @@
-import typing
-from typing import Iterator
 from itertools import chain
 from classes import HH, SJ
 from utils import *
@@ -15,7 +13,7 @@ def get_menu() -> str:
     return input(">>> ")
 
 
-def change_menu_item(vacancies: Iterator, count: int):
+def change_menu_item(count: int):
     while True:
         user_input = get_menu()  # выбор пункта меню
         vacancies = get_data_of_file()
@@ -57,7 +55,7 @@ def main():
             count += site_count
             print(f" > на сайте {site} найдено {site_count} подходящих вакансий")
         print(f"всего найдено {count} подходящих вакансий")
-        change_menu_item(vacancies, count)  # обработка меню
+        change_menu_item(count)  # обработка меню
 
 
 if __name__ == '__main__':
