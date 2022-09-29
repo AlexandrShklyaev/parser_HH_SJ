@@ -79,7 +79,11 @@ class SJ(Engine):
 
                         spliter_2 = '<span class="_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky">'
 
-                        desc = step_0[1].split(spliter_2)[1].split('</span>')[0]
+                        try:
+                            desc = step_0[1].split(spliter_2)[1].split('</span>')[0]
+                        except:
+                            continue
+
                         desc = desc.replace('<br/>', ' ').replace('<span class="_1Ijga">', '')
                         if salary != 'По говорённости':
                             yield {'salary': int(salary),
